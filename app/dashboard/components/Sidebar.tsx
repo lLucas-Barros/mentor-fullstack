@@ -79,32 +79,51 @@ export default function Sidebar({ projects, user, onNewProject }: SidebarProps) 
               </p>
             )}
             {projects.map(project => (
-              <button
+              <div
                 key={project.id}
-                onClick={() => router.push(`/dashboard/${project.id}`)}
-                className={`w-full text-left px-3 py-2.5 rounded-md mb-1 border transition-colors ${activeId === project.id
+                className={`group relative w-full text-left px-3 py-2.5 rounded-md mb-1 border transition-colors ${activeId === project.id
                     ? 'bg-[#1a1a1a] border-[#2a2a2a]'
                     : 'border-transparent hover:bg-[#1a1a1a]'
                   }`}
               >
-                <div className="text-sm font-medium text-[#d8d8d8] truncate mb-1">
-                  {project.name}
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span
-                    className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded"
-                    style={{
-                      color: TYPE_COLORS[project.type] || '#666',
-                      background: (TYPE_COLORS[project.type] || '#666') + '22',
-                    }}
-                  >
-                    {project.type}
-                  </span>
-                  <span className="text-[10px] text-[#444]">
-                    {project.stack.length} techs
-                  </span>
-                </div>
-              </button>
+                <button
+                  onClick={() => router.push(`/dashboard/${project.id}`)}
+                  className="w-full text-left"
+                >
+                  <div className="text-sm font-medium text-[#d8d8d8] truncate mb-1 pr-5">
+                    {project.name}
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded"
+                      style={{
+                        color: TYPE_COLORS[project.type] || '#666',
+                        background: (TYPE_COLORS[project.type] || '#666') + '22',
+                      }}
+                    >
+                      {project.type}
+                    </span>
+                    <span className="text-[10px] text-[#444]">
+                      {project.stack.length} techs
+                    </span>
+                  </div>
+                </button>
+                <button
+                  onClick={async (e) => {
+                    e.stopPropagation()
+                    if (!confirm(`Deletar "${project.name}"? Isso remove todas as mensagens e features.`)) return
+                    const { createClient } = await import('@/lib/supabase/client')
+                    const supabase = createClient()
+                    await supabase.from('projects').delete().eq('id', project.id)
+                    router.refresh()
+                    if (activeId === project.id) router.push('/dashboard')
+                  }}
+                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 text-[#444] hover:text-[#e05252] transition-all text-base leading-none"
+                  title="Deletar projeto"
+                >
+                  ×
+                </button>
+              </div>
             ))}
           </div>
 
@@ -123,7 +142,19 @@ export default function Sidebar({ projects, user, onNewProject }: SidebarProps) 
               <div className="w-5 h-5 rounded-full bg-[#1a2a1a] border border-[#3ecf8e44] flex items-center justify-center text-[9px] text-[#3ecf8e] font-mono font-medium flex-shrink-0">
                 {user.email[0].toUpperCase()}
               </div>
-              <span className="text-xs text-[#555] truncate">{user.email}</span>
+              <span className="text-xs text-[#555] truncate flex-1">{user.email}</span>
+              <button
+                onClick={async () => {
+                  const { createClient } = await import('@/lib/supabase/client')
+                  const supabase = createClient()
+                  await supabase.auth.signOut()
+                  window.location.href = '/login'
+                }}
+                className="flex-shrink-0 px-2 py-1 rounded-md text-[10px] font-medium text-[#555] border border-[#252525] hover:text-[#e05252] hover:border-[#e05252] transition-colors"
+                title="Sair"
+              >
+                sair
+              </button>
             </div>
           </div>
         </>
