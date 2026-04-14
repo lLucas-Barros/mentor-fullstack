@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import ChatPanel from './components/ChatPanel'
+import TabBar from './components/TabBar'
 
 export default async function ProjectPage({
   params,
@@ -31,19 +32,20 @@ export default async function ProjectPage({
   return (
     <div className="flex flex-col h-full">
       {/* TopBar */}
-      <div className="flex items-center gap-3 px-5 h-12 border-b border-[#1e1e1e] bg-[#141414] flex-shrink-0">
-        <span className="font-mono text-sm font-medium text-[#e8e8e8]">
-          {project.name}
-        </span>
-        <span
-          className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded"
-          style={{ color: '#3ecf8e', background: '#3ecf8e22' }}
-        >
-          {project.type}
-        </span>
-        <span className="text-[10px] text-[#444]">
-          {project.complexity}
-        </span>
+      <div className="flex items-center justify-between px-5 h-12 border-b border-[#1e1e1e] bg-[#141414] flex-shrink-0">
+        <div className="flex items-center gap-3">
+          <span className="font-mono text-sm font-medium text-[#e8e8e8]">
+            {project.name}
+          </span>
+          <span
+            className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded"
+            style={{ color: '#3ecf8e', background: '#3ecf8e22' }}
+          >
+            {project.type}
+          </span>
+          <span className="text-[10px] text-[#444]">{project.complexity}</span>
+        </div>
+        <TabBar projectId={project.id} />
       </div>
 
       {/* Chat */}
