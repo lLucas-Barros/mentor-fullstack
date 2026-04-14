@@ -13,9 +13,8 @@ type Project = {
 
 type SidebarProps = {
   projects: Project[]
-  user: {
-    email: string
-  }
+  user: { email: string }
+  onNewProject: () => void
 }
 
 const TYPE_COLORS: Record<string, string> = {
@@ -26,7 +25,7 @@ const TYPE_COLORS: Record<string, string> = {
   'Empresa': '#e05252',
 }
 
-export default function Sidebar({ projects, user }: SidebarProps) {
+export default function Sidebar({ projects, user, onNewProject }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
@@ -43,7 +42,6 @@ export default function Sidebar({ projects, user }: SidebarProps) {
       style={{ width: collapsed ? 48 : 240 }}
       className="flex flex-col h-screen bg-[#141414] border-r border-[#1e1e1e] transition-all duration-200 flex-shrink-0"
     >
-      {/* Header */}
       <div className="flex items-center justify-between px-3 h-12 border-b border-[#1e1e1e]">
         {!collapsed && (
           <span className="font-mono text-sm font-medium text-white">
@@ -64,10 +62,9 @@ export default function Sidebar({ projects, user }: SidebarProps) {
 
       {!collapsed && (
         <>
-          {/* Novo projeto */}
           <div className="px-2 pt-3 pb-1">
             <button
-              onClick={() => router.push('/dashboard/new')}
+              onClick={onNewProject}
               className="w-full flex items-center gap-2 px-3 py-2 text-[#3ecf8e] text-sm border border-dashed border-[#3ecf8e44] rounded-md hover:bg-[#1a2a1a] transition-colors"
             >
               <span className="text-base leading-none">+</span>
@@ -75,7 +72,6 @@ export default function Sidebar({ projects, user }: SidebarProps) {
             </button>
           </div>
 
-          {/* Lista de projetos */}
           <div className="flex-1 overflow-y-auto px-2 py-1">
             {projects.length === 0 && (
               <p className="text-xs text-[#444] px-2 py-3 text-center">
@@ -113,7 +109,6 @@ export default function Sidebar({ projects, user }: SidebarProps) {
             ))}
           </div>
 
-          {/* Footer */}
           <div className="px-3 py-3 border-t border-[#1e1e1e]">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-[#1a2a1a] border border-[#3ecf8e44] flex items-center justify-center text-[10px] text-[#3ecf8e] font-mono font-medium flex-shrink-0">
