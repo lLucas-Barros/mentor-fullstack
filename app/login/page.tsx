@@ -1,15 +1,17 @@
 import { createClient } from '@/lib/supabase/server'
+import { getSiteUrl } from '@/lib/site-url'
 import { redirect } from 'next/navigation'
 
 async function signInWithGitHub() {
   'use server'
-  
+
   const supabase = await createClient()
-  
-  const { data, error } = await supabase.auth.signInWithOAuth({
+  const siteUrl = await getSiteUrl()
+
+  const { data } = await supabase.auth.signInWithOAuth({
     provider: 'github',
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+      redirectTo: `${siteUrl}/auth/callback`,
     },
   })
 
