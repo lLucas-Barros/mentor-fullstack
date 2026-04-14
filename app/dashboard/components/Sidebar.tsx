@@ -53,9 +53,9 @@ export default function Sidebar({ projects, user, onNewProject }: SidebarProps) 
           className="text-[#555] hover:text-[#c8c8c8] transition-colors ml-auto"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-            <rect x="2" y="4" width="12" height="1.5" rx="0.75"/>
-            <rect x="2" y="7.25" width="8" height="1.5" rx="0.75"/>
-            <rect x="2" y="10.5" width="12" height="1.5" rx="0.75"/>
+            <rect x="2" y="4" width="12" height="1.5" rx="0.75" />
+            <rect x="2" y="7.25" width="8" height="1.5" rx="0.75" />
+            <rect x="2" y="10.5" width="12" height="1.5" rx="0.75" />
           </svg>
         </button>
       </div>
@@ -82,11 +82,10 @@ export default function Sidebar({ projects, user, onNewProject }: SidebarProps) 
               <button
                 key={project.id}
                 onClick={() => router.push(`/dashboard/${project.id}`)}
-                className={`w-full text-left px-3 py-2.5 rounded-md mb-1 border transition-colors ${
-                  activeId === project.id
+                className={`w-full text-left px-3 py-2.5 rounded-md mb-1 border transition-colors ${activeId === project.id
                     ? 'bg-[#1a1a1a] border-[#2a2a2a]'
                     : 'border-transparent hover:bg-[#1a1a1a]'
-                }`}
+                  }`}
               >
                 <div className="text-sm font-medium text-[#d8d8d8] truncate mb-1">
                   {project.name}
@@ -109,9 +108,19 @@ export default function Sidebar({ projects, user, onNewProject }: SidebarProps) 
             ))}
           </div>
 
-          <div className="px-3 py-3 border-t border-[#1e1e1e]">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-[#1a2a1a] border border-[#3ecf8e44] flex items-center justify-center text-[10px] text-[#3ecf8e] font-mono font-medium flex-shrink-0">
+          <div className="px-3 py-3 border-t border-[#1e1e1e] space-y-1">
+            <button
+              onClick={() => router.push('/dashboard/settings')}
+              className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-xs text-[#555] hover:text-[#c8c8c8] hover:bg-[#1a1a1a] transition-colors"
+            >
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zm0-1a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" />
+                <path d="M9.83 2.22a1.75 1.75 0 00-3.66 0L5.9 2.5a6.01 6.01 0 00-1.44.83l-.27-.07a1.75 1.75 0 00-2.03 2.46l.13.26A6.06 6.06 0 002 7.99v.01c0 .35.03.7.09 1.03l-.13.26a1.75 1.75 0 002.03 2.46l.27-.07c.44.34.92.61 1.44.83l.27.28a1.75 1.75 0 003.66 0l.27-.28a6 6 0 001.44-.83l.27.07a1.75 1.75 0 002.03-2.46l-.13-.26c.06-.33.09-.68.09-1.03v-.01c0-.35-.03-.7-.09-1.03l.13-.26A1.75 1.75 0 0012.57 3.2l-.27.07A6.01 6.01 0 0010.86 2.5l-.27-.28-.56.05z" />
+              </svg>
+              Configurações
+            </button>
+            <div className="flex items-center gap-2 px-2 py-1.5">
+              <div className="w-5 h-5 rounded-full bg-[#1a2a1a] border border-[#3ecf8e44] flex items-center justify-center text-[9px] text-[#3ecf8e] font-mono font-medium flex-shrink-0">
                 {user.email[0].toUpperCase()}
               </div>
               <span className="text-xs text-[#555] truncate">{user.email}</span>

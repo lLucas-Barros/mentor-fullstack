@@ -70,30 +70,69 @@ Perfil de conhecimento: ${JSON.stringify(projectContext.profile || {})}`
     ...messages,
   ]
 
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 2048,
-      system: SYSTEM_PROMPT,
-      messages: apiMessages,
-    }),
-  })
+  const isGroq = apiKey.startsWith('gsk_')
 
-  const data = await response.json()
+  let reply = ''
 
-  if (!response.ok) {
-    return NextResponse.json(
-      { error: data.error?.message || 'Erro na API do Claude' },
-      { status: response.status }
-    )
+  if (isGroq) {
+    const groqMessages = [
+      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'user', content: contextMessage },
+      { role: 'assistant', content: 'Entendido. Estou com o contexto completo do projeto. Pode começar.' },
+      ...messages,
+    ]
+
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        max_tokens: 2048,
+        messages: groqMessages,
+      }),
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: data.error?.message || 'Erro na API do Groq' },
+        { status: response.status }
+      )
+    }
+
+    reply = data.choices?.[0]?.message?.content || 'Erro ao obter resposta.'
+  } else {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2048,
+        system: SYSTEM_PROMPT,
+        messages: apiMessages,
+      }),
+    })
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: data.error?.message || 'Erro na API do Claude' },
+        { status: response.status }
+      )
+    }
+
+    reply = data.content?.[0]?.text || 'Erro ao obter resposta.'
   }
 
-  const reply = data.content?.[0]?.text || 'Erro ao obter resposta.'
   return NextResponse.json({ reply })
 }
+
