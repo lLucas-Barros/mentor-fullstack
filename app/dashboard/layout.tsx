@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import Sidebar from './components/Sidebar'
+import DashboardShell from './components/DashboardShell'
 
 export default async function DashboardLayout({
   children,
@@ -20,11 +20,8 @@ export default async function DashboardLayout({
     .order('created_at', { ascending: false })
 
   return (
-    <div className="flex h-screen bg-[#0e0e0e] text-[#c8c8c8]">
-      <Sidebar projects={projects || []} user={{ email: user.email! }} />
-      <div className="flex flex-col flex-1 overflow-hidden">
-        {children}
-      </div>
-    </div>
+    <DashboardShell projects={projects || []} user={{ email: user.email! }}>
+      {children}
+    </DashboardShell>
   )
 }
