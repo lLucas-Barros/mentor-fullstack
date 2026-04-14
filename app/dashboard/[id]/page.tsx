@@ -1,9 +1,58 @@
-export default function ProjectPage({ params }: { params: { id: string } }) {
-    return (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-sm text-[#555]">Projeto {params.id}</p>
-        </div>
+import { createClient } from '@/lib/supabase/server'
+import { redirect, notFound } from 'next/navigation'
+import ChatPanel from './components/ChatPanel'
+
+export default async function ProjectPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params
+  const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const { data: project } = await supabase
+    .from('projects')
+    .select('*')
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .single()
+
+  if (!project) notFound()
+
+  const { data: messages } = await supabase
+    .from('messages')
+    .select('id, role, content, created_at')
+    .eq('project_id', id)
+    .order('created_at', { ascending: true })
+
+  return (
+    <div className="flex flex-col h-full">
+      {/* TopBar */}
+      <div className="flex items-center gap-3 px-5 h-12 border-b border-[#1e1e1e] bg-[#141414] flex-shrink-0">
+        <span className="font-mono text-sm font-medium text-[#e8e8e8]">
+          {project.name}
+        </span>
+        <span
+          className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded"
+          style={{ color: '#3ecf8e', background: '#3ecf8e22' }}
+        >
+          {project.type}
+        </span>
+        <span className="text-[10px] text-[#444]">
+          {project.complexity}
+        </span>
       </div>
-    )
-  }
+
+      {/* Chat */}
+      <div className="flex-1 overflow-hidden">
+        <ChatPanel
+          project={project}
+          initialMessages={messages || []}
+        />
+      </div>
+    </div>
+  )
+}
